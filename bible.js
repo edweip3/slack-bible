@@ -48,6 +48,19 @@ var getBook = function(book) {
 	return keywords[book.toLowerCase()].name;
 }
 
+var getNumVerses = function(book, chapter) {
+	var bookObj = keywords[book.toLowerCase()];
+	if (!bookObj) {
+		return 0;
+	}
+
+	var chapterObj = bible[bookObj.code][chapter+''];
+	if (!chapterObj) {
+		return 0;
+	}
+	return _.keys(chapterObj).length;
+}
+
 var getVerse = function(book, chapter, verse, cb) {
 	book = book.toLowerCase();
 	if (!keywords[book]) {
@@ -64,7 +77,10 @@ var getVerse = function(book, chapter, verse, cb) {
 	}
 };
 
+
+
 module.exports = {
 	getVerse: getVerse,
-	getBook: getBook
+	getBook: getBook,
+	getNumVerses: getNumVerses
 };

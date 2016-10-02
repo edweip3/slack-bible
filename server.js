@@ -31,6 +31,8 @@ server.route({
 	handler: function (request, reply) {
 
 		try {
+
+
 			var temp = request.query.text.split(' ');
 			var temp2;
 
@@ -50,21 +52,29 @@ server.route({
 				return reply(usage());
 			}
 			var chapter = temp2[0];
-			if (!temp2[1]){
-				return reply(usage());
-			}
-			var temp3 = temp2[1].split('-');
-
-			if (!temp3[0]) {
-				return reply(usage());
-			}
-
-			var min = parseInt(temp3[0]);
-			var max = temp3[1] ? parseInt(temp3[1]) : parseInt(temp3[0]);
 
 			var verses = [];
-			for (var i=min; i<=max; i++) {
-				verses.push(i);
+			if (!temp2[1]){
+
+				var numVerses = Bible.getNumVerses(book, chapter);
+
+				for (var j=1; j<=numVerses; j++) {
+					verses.push(j);
+				}
+			} else {
+				var temp3 = temp2[1].split('-');
+
+				if (!temp3[0]) {
+					return reply(usage());
+				}
+
+				var min = parseInt(temp3[0]);
+				var max = temp3[1] ? parseInt(temp3[1]) : parseInt(temp3[0]);
+
+
+				for (var i=min; i<=max; i++) {
+					verses.push(i);
+				}
 			}
 
 			var scripture = '';
@@ -83,7 +93,7 @@ server.route({
 					//return reply(Boom.badRequest('sorry'));
 					return reply(usage());
 				}
-				scripture = Bible.getBook(book) + ' ' + chapter + ":" + (min==max ? min : min+'-'+max) + '\n' + scripture;
+				scripture = Bible.getBook(book) + ' ' + temp2[0] + (temp2[1] ? ':' + temp2[1] : '') + '\n' + scripture;
 
 				var ret = {
 				    'response_type': 'in_channel',
@@ -101,21 +111,21 @@ server.route({
     },
     config: {
         validate: {
-            /*query: function(val, options, next) {
-			console.log(val);
-			if (!val.text) {
-				return next(new Error('no q'));
-			}
+            query: function(val, options, next) {
+				//console.log(val);
+				/*if (!val.text) {
+					return next(new Error('no q'));
+				}*/
 
-			if (val.token!==config.token) {
-				return next(new Error('invalid token'));
+				if (val.token!==config.token) {
+					return next(new Error('invalid token'));
+				}
+				/*var temp = val.text.split(' ');
+				if (temp.length < 2) {
+					return next(new Error('wrong query format'));
+				}*/
+				next(null, val);
 			}
-			var temp = val.text.split(' ');
-			if (temp.length < 2) {
-				return next(new Error('wrong query format'));
-			}
-			next(null, val);
-		}*/
         }
     }
 });
