@@ -11,6 +11,20 @@ const Bible = require('./bible');
 const server = new Hapi.Server();
 server.connection({ port: 3000 });
 
+
+function usage() {
+	var usage = 'Usage: /bible <book> <chapter>:<verse>[-<verse>]\n';
+	usage += '\n';
+	usage += 'Examples:\n';
+	usage += '/bible gen 1:1\n';
+	usage += '/bible gen 1:1-10\n';
+	usage += '/bible genesis 1:1-10\n';
+	usage += '\n';
+	usage += 'NOTE: spaces are important!';
+
+	return usage;
+}
+
 server.route({
 	method: 'GET',
 	path: '/search',
@@ -33,16 +47,16 @@ server.route({
 			//console.log(book);
 
 			if (!temp[1]){
-				return reply();
+				return reply(usage());
 			}
 			var chapter = temp2[0];
 			if (!temp2[1]){
-				return reply();
+				return reply(usage());
 			}
 			var temp3 = temp2[1].split('-');
 
 			if (!temp3[0]) {
-				return reply();
+				return reply(usage());
 			}
 
 			var min = parseInt(temp3[0]);
@@ -67,7 +81,7 @@ server.route({
 				if (err) {
 					console.log(err);
 					//return reply(Boom.badRequest('sorry'));
-					return reply();
+					return reply(usage());
 				}
 				ret = Bible.getBook(book) + ' ' + chapter + ":" + (min==max ? min : min+'-'+max) + '\n' + ret;
 				reply(ret);
@@ -75,7 +89,7 @@ server.route({
 
 		} catch(e) {
 			console.log(e);
-			reply();
+			reply(usage());
 		}
 
     },
