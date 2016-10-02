@@ -4,7 +4,11 @@ const _ = require('lodash');
 var keywords = {};
 
 _.keys(books).forEach(function(key){
-	keywords[key.toLowerCase()] = books[key].code;
+	keywords[key.toLowerCase()] = {
+		name: key,
+		code: books[key].code
+	};
+
 	books[key].tags.forEach(function(tag){
 		keywords[tag] = {
 			name: key,
@@ -52,11 +56,11 @@ var getVerse = function(book, chapter, verse, cb) {
 	try {
 		verse = bible[keywords[book].code][chapter+''][verse+''];
 		if (!verse) {
-			return cb(new Error('no such verse'));
+			return cb(new Error('no such verse '+ keywords[book].name + ' ' + chapter + ':' + verse));
 		}
 		cb(null, verse);
 	} catch(e) {
-		cb(new Error('no such verse'));
+			return cb(new Error('no such verse '+ keywords[book].name + ' ' + chapter + ':' + verse));
 	}
 };
 
