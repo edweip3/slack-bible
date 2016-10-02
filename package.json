@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@slack/client": "^3.6.0",
     "async": "^2.0.1",
     "boom": "^4.1.0",
     "hapi": "^15.1.1",
