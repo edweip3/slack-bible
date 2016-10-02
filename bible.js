@@ -1,16 +1,33 @@
 const books = require('./books.json');
+const _ = require('lodash');
+
+var keywords = {};
+
+_.keys(books).forEach(function(key){
+	keywords[key.toLowerCase()] = books[key].code;
+	books[key].tags.forEach(function(tag){
+		keywords[tag] = books[key].code;
+	});
+});
+
 var lineReader = require('readline').createInterface({
 	input: require('fs').createReadStream('./bibles/Chinese__Union_Simplified__cus__LTR.txt')
 });
 
 var bible = {};
+
 lineReader.on('line', function (line) {
 	var tokens = line.split('||');
-	//console.log(tokens);
-	if (!bible[tokens[0]]) bible[tokens[0]] = {};
-	if (!bible[tokens[0]][tokens[1]]) bible[tokens[0]][tokens[1]] = {};
-	bible[tokens[0]][tokens[1]][tokens[2]]=tokens[3].replace(/\s/g, '');
+	var book = tokens[0];
+	var chapter = tokens[1];
+	var verse = tokens[2];
+	var text = tokens[3];
 
+	//console.log(tokens);
+	if (!bible[book]) bible[book] = {};
+	if (!bible[book][chapter]) bible[book][chapter] = {};
+
+	bible[book][chapter][verse] = text.replace(/\s/g, '');
 });
 
 lineReader.on('close', function (line) {
@@ -20,12 +37,17 @@ lineReader.on('close', function (line) {
 	})*/
 });
 
+function getBook(query) {
+
+}
+
 var getVerse = function(book, chapter, verse, cb) {
-	if (!books[book]) {
+	book = book.toLowerCase();
+	if (!keywords[book]) {
 		return cb(new Error('no such book'));
 	}
 	try {
-		verse = bible[books[book].code][chapter+''][verse+''];
+		verse = bible[keywords[book]][chapter+''][verse+''];
 		if (!verse) {
 			return cb(new Error('no such verse'));
 		}
@@ -35,4 +57,6 @@ var getVerse = function(book, chapter, verse, cb) {
 	}
 };
 
-module.exports = {getVerse: getVerse};
+module.exports = {
+	getVerse: getVerse
+};

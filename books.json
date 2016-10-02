@@ -1,5 +1,5 @@
 {
-	"Genesis":{"code":"01O", "tags": []},
+	"Genesis":{"code":"01O", "tags": ["gen"]},
 	"Exodus":{"code":"02O", "tags": []},
 	"Leviticus":{"code":"03O", "tags": []},
 	"Numbers":{"code":"04O", "tags": []},
