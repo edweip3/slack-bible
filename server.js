@@ -69,6 +69,7 @@ server.route({
 					//return reply(Boom.badRequest('sorry'));
 					return reply();
 				}
+				ret = Bible.getBook(book) + ' ' + chapter + ":" + (min==max ? min : min+'-'+max) + '\n' + ret;
 				reply(ret);
 			});
 

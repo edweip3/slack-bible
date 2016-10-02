@@ -6,7 +6,10 @@ var keywords = {};
 _.keys(books).forEach(function(key){
 	keywords[key.toLowerCase()] = books[key].code;
 	books[key].tags.forEach(function(tag){
-		keywords[tag] = books[key].code;
+		keywords[tag] = {
+			name: key,
+			code: books[key].code
+		};
 	});
 });
 
@@ -37,17 +40,17 @@ lineReader.on('close', function (line) {
 	})*/
 });
 
-function getBook(query) {
-
+var getBook = function(book) {
+	return keywords[book.toLowerCase()].name;
 }
 
 var getVerse = function(book, chapter, verse, cb) {
 	book = book.toLowerCase();
 	if (!keywords[book]) {
-		return cb(new Error('no such book'));
+		return cb(new Error('no such book' + book));
 	}
 	try {
-		verse = bible[keywords[book]][chapter+''][verse+''];
+		verse = bible[keywords[book].code][chapter+''][verse+''];
 		if (!verse) {
 			return cb(new Error('no such verse'));
 		}
@@ -58,5 +61,6 @@ var getVerse = function(book, chapter, verse, cb) {
 };
 
 module.exports = {
-	getVerse: getVerse
+	getVerse: getVerse,
+	getBook: getBook
 };
