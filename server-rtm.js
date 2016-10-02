@@ -1,7 +1,9 @@
+const config = require('config.js');
+
 var RtmClient = require('@slack/client').RtmClient;
 var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
 
-var token = 'xoxb-86389590852-x6kH6exT965RA6is0NB7DQHU';
+var token = config['token-rtm'];
 
 var rtm = new RtmClient(token, {logLevel: 'info'});
 rtm.start();
