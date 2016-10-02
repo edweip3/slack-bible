@@ -67,14 +67,14 @@ server.route({
 				verses.push(i);
 			}
 
-			var ret = '';
+			var scripture = '';
 			async.eachSeries(verses, function(verse, cb){
 				Bible.getVerse(book, chapter, verse, function(err, result){
 					if (err) {
 						console.log(err);
 						return cb(err);
 					}
-		        	ret += verse + '. ' + result + '\n';
+		        	scripture += verse + '. ' + result + '\n';
 		        	cb();
 				});
 			}, function(err) {
@@ -83,7 +83,13 @@ server.route({
 					//return reply(Boom.badRequest('sorry'));
 					return reply(usage());
 				}
-				ret = Bible.getBook(book) + ' ' + chapter + ":" + (min==max ? min : min+'-'+max) + '\n' + ret;
+				scripture = Bible.getBook(book) + ' ' + chapter + ":" + (min==max ? min : min+'-'+max) + '\n' + scripture;
+
+				var ret = {
+				    'response_type': 'in_channel',
+				    'text': scripture
+				}
+
 				reply(ret);
 			});
 
