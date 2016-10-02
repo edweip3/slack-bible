@@ -84,7 +84,7 @@ server.route({
 						console.log(err);
 						return cb(err);
 					}
-		        	scripture += verse + '. ' + result + '\n';
+		        	scripture += '*' + verse + '*' + result;
 		        	cb();
 				});
 			}, function(err) {
