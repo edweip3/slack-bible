@@ -1,4 +1,4 @@
-const config = require('config.js');
+const config = require('./config.js');
 
 var RtmClient = require('@slack/client').RtmClient;
 var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
