@@ -2,17 +2,20 @@
 
 const Hapi = require('hapi');
 const Joi = require('joi');
-const Bible = require('./bible');
 const async = require('async');
+const Boom = require('boom');
+
 const config = require('./config');
+const Bible = require('./bible');
 
 const server = new Hapi.Server();
 server.connection({ port: 3000 });
 
 server.route({
-    method: 'GET',
-    path: '/search',
-    handler: function (request, reply) {
+	method: 'GET',
+	path: '/search',
+	handler: function (request, reply) {
+
 		var temp = request.query.text.split(' ');
 		var book = '';
 		if (temp[0]==='1' || temp[0]==='2' || temp[0]==='3') {
@@ -21,9 +24,20 @@ server.route({
 			book = temp[0];
 		}
 
+		if (!temp[1]){
+			return reply();
+		}
 		var temp2 = temp[1].split(':');
 		var chapter = temp2[0];
+		if (!temp2[1]){
+			return reply();
+		}
 		var temp3 = temp2[1].split('-');
+
+		if (!temp3[0]) {
+			return reply();
+		}
+
 		var min = parseInt(temp3[0]);
 		var max = temp3[1] ? parseInt(temp3[1]) : parseInt(temp3[0]);
 
@@ -45,7 +59,8 @@ server.route({
 		}, function(err) {
 			if (err) {
 				console.log(err);
-				return reply(400);
+				//return reply(Boom.badRequest('sorry'));
+				return reply();
 			}
 			reply(ret);
 		});
@@ -53,7 +68,7 @@ server.route({
     },
     config: {
         validate: {
-            query: function(val, options, next) {
+            /*query: function(val, options, next) {
 			console.log(val);
 			if (!val.text) {
 				return next(new Error('no q'));
@@ -67,7 +82,7 @@ server.route({
 				return next(new Error('wrong query format'));
 			}
 			next(null, val);
-		}
+		}*/
         }
     }
 });
@@ -79,3 +94,4 @@ server.start((err) => {
     }
     console.log(`Server running at: ${server.info.uri}`);
 });
+
